@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import React from 'react';
+import * as React from 'react';
 import './playlist-item.css';
 
 export interface PlayListItemProps {
-    key: string;
+    id: string;
     thumbnail: string;
     title: string;
     description: string;
@@ -16,7 +14,7 @@ export interface PlayListItemProps {
 }
 
 const PlaylistItem = ({
-    key,
+    id,
     thumbnail,
     title,
     description,
@@ -27,7 +25,7 @@ const PlaylistItem = ({
     onPause,
 }: PlayListItemProps) => {
     return (
-        <div key={key} className='SDK-playlist-item' data-test-id={`playlist-item-${key}`}>
+        <div key={id} className='SDK-playlist-item' data-test-id={`playlist-item-${id}`}>
             <img src={thumbnail} />
             <h3>{title}</h3>
             <p>{description}</p>
