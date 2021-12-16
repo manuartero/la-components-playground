@@ -1,0 +1,52 @@
+.SDK__playlist-item {
+    display: flex;
+    flex-direction: column;
+    width: 1012px;
+    height: 96px;
+
+    &__header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+
+        &__thumbnail {
+            width: 96px;
+            height: 96px;
+            position: relative;
+
+            &::before {
+                /* fixed img: placeholder */
+                width: 96px;
+                height: 96px;
+                content: ''; // XXX POR QUE NO SE VE?
+                position: absolute;
+                background-image: url('https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/twitter/282/dog-face_1f436.png');
+            }
+
+            &::after {
+                /* fixed img: audio wave */
+                position: absolute;
+            }
+        }
+
+        &__info {
+            flex-direction: column;
+            width: 708px;
+            p {
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        &__actions {
+            flex-direction: row;
+        }
+    }
+
+    &__description {
+    }
+}

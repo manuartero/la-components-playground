@@ -1,1 +1,1 @@
-export { default } from './playlist-item-controller';
+export { default } from './playlist-item-example';
