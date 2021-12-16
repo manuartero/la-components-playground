@@ -8,15 +8,16 @@ const data = {
         La actriz, guionista y directora cuenta cómo convive con las críticas y explica \
         su proceso para crear contenido feminista. \
         La guinda del pastel la ponen Henar Alvarez y las Spice Girls con un fin de fiesta épico',
-    thumbnail: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/fox_1f98a.png',
+    thumbnail: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/twitter/282/fox_1f98a.png',
     durationInSeconds: 3540,
     progressInSeconds: 0,
 };
 
-const PlaylistItemController: FunctionComponent = () => {
+const PlayListExample: FunctionComponent = () => {
     const onPlay = () => {
         console.log('play');
     };
+
     const onPause = () => {
         console.log('pause');
     };
@@ -24,6 +25,7 @@ const PlaylistItemController: FunctionComponent = () => {
     return (
         <PlaylistItem
             id='42'
+            type='with-thumbnail'
             thumbnail={data.thumbnail}
             title={data.title}
             description={data.description}
@@ -36,4 +38,4 @@ const PlaylistItemController: FunctionComponent = () => {
     );
 };
 
-export default PlaylistItemController;
+export default PlayListExample;
