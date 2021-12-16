@@ -1,0 +1,90 @@
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-SemiBoldItalic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-LightItalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-ExtraLight.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'WorkSans';
+    src: local('WorkSans'), url('./fonts/WorkSans-ExtraLightItalic.ttf') format('truetype');
+    font-weight: 200;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Telefonica';
+    src: local('Telefonica'), url('./fonts/Telefonica-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Telefonica';
+    src: local('Telefonica'), url('./fonts/Telefonica-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Telefonica';
+    src: local('Telefonica'), url('./fonts/Telefonica-ExtraLight.woff') format('woff');
+    font-weight: 200;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Helvetica';
+    src: url('./fonts/HelveticaNeue-Thin.woff2') format('woff2');
+    font-weight: 100;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'MovistarPlus';
+    src: url('./fonts/apercu_movistar_plus-bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+}
