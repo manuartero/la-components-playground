@@ -1,0 +1,8 @@
+<svg class="fill-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 100 100">
+    <path class="grey" d="M40,90
+             A40,40 0 1,1 60,90"
+          style="fill:none;"/>
+    <path class="purple" d="M40,90
+             A40,40 0 1,1 60,90"
+          style="fill:none;"/>
+</svg>

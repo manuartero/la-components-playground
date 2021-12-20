@@ -46,6 +46,10 @@ const PlayList: FunctionComponent = () => {
         console.log('pause');
     };
 
+    const onLeftPressed = () => {
+        console.log('left');
+    };
+
     return (
         <PlaylistItem
             id='42'
@@ -55,10 +59,11 @@ const PlayList: FunctionComponent = () => {
             description={data[2].description}
             durationInSeconds={data[2].durationInSeconds}
             isPlaying={true}
-            isFocused={false}
+            isFocused={true}
             onPlay={onPlay}
             onPause={onPause}
             progressInSeconds={data[2].progressInSeconds}
+            leftPressed={onLeftPressed}
         />
     );
 };

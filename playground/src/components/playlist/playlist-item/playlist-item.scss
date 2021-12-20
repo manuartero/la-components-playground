@@ -1,8 +1,24 @@
-@mixin action-button($img) {
+@function icon($path) {
+    @return '../../../assets/icons/' + $path;
+}
+
+@mixin fixed-img-placeholder($icon) {
+    content: '';
+    width: 96px;
+    height: 96px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-image: url(icon($icon));
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+@mixin action-button($icon) {
     width: 64px;
     height: 64px;
-    margin: 16px 16px 16px 24px;
-    background-image: url($img);
+    margin: 16px 16px 16px 0;
+    background-image: url(icon($icon));
     background-size: contain;
 }
 
@@ -11,6 +27,17 @@
     flex-direction: column;
     width: 1012px;
     height: 96px;
+    border-radius: 8px;
+    transition: height 300ms ease-in;
+    overflow: hidden;
+
+    &--focused {
+        background-color: rgba(245, 245, 245, 0.2);
+    }
+
+    &--showing-info {
+        height: 320px;
+    }
 
     &__header {
         display: flex;
@@ -18,6 +45,8 @@
         align-items: center;
         justify-content: center;
         width: 100%;
+        min-height: 96px;
+        overflow: hidden;
 
         &__thumbnail {
             width: 96px;
@@ -36,32 +65,17 @@
                 z-index: 9;
 
                 &::before {
-                    /* fixed img: placeholder */
-                    content: '';
-                    width: 96px;
-                    height: 96px;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    background-image: url('../../../assets/icons/playlist-item-placeholder.svg');
+                    @include fixed-img-placeholder('playlist-item-placeholder.svg');
                     background-size: 36px 28px, contain;
-                    background-position: center;
-                    background-repeat: no-repeat;
                     background-color: rgba(245, 245, 245, 0.15);
-                    z-index: 0;
+                    z-index: -1;
                 }
             }
 
             &__wave {
-                width: 96px;
-                height: 96px;
-                position: absolute;
-                top: 0;
-                left: 0;
-                background-image: url('../../../assets/icons/playlist-item-waves.svg');
+                @include fixed-img-placeholder('playlist-item-waves.svg');
                 background-size: 64px 64px, contain;
-                background-position: center;
-                background-repeat: no-repeat;
+
                 &--hidden {
                     opacity: 0;
                 }
@@ -71,6 +85,7 @@
         &__info {
             flex-direction: column;
             width: 708px;
+            margin-right: 24px;
             p {
                 width: 100%;
                 white-space: nowrap;
@@ -80,33 +95,78 @@
         }
 
         &__actions {
+            display: flex;
             flex-direction: row;
 
             &__play {
-                @include action-button('../../../assets/icons/playlist-item-bt-play-default.svg');
+                @include action-button('playlist-item-bt-play-default.svg');
 
                 &--focused {
-                    background-image: url('../../../assets/icons/playlist-item-bt-play-focused.svg');
+                    background-image: url(icon('playlist-item-bt-play-focused.svg'));
                 }
             }
 
             &__pause {
-                @include action-button('../../../assets/icons/playlist-item-bt-pause-default.svg');
+                @include action-button('playlist-item-bt-pause-default.svg');
 
                 &--focused {
-                    background-image: url('../../../assets/icons/playlist-item-bt-pause-focused.svg');
+                    background-image: url(icon('playlist-item-bt-pause-focused.svg'));
                 }
             }
 
             &__info {
-                @include action-button('../../../assets/icons/playlist-item-bt-info.svg');
+                @include action-button('playlist-item-bt-info-default.svg');
 
                 &--focused {
+                    background-image: url(icon('playlist-item-bt-info-focused.svg'));
+                }
+            }
+
+            &__close {
+                @include action-button('playlist-item-bt-close-default.svg');
+                &--focused {
+                    background-image: url(icon('playlist-item-bt-close-focused.svg'));
                 }
             }
         }
     }
 
     &__description {
+        width: 948px;
+        height: 176px;
+        margin: 24px 32px;
+        font-family: WorkSans;
+        font-size: 28px;
+        font-weight: 500;
+        letter-spacing: -0.54px;
+        overflow: hidden;
+        opacity: 0;
+        transition: opacity 300ms ease-in;
+
+        &--showing-info {
+            opacity: 1;
+        }
+    }
+
+    svg {
+        height: 90vh;
+        margin: auto;
+        display: block;
+    }
+
+    path {
+        stroke-linecap: round;
+        stroke-width: 2;
+    }
+
+    path.grey {
+        stroke: lightgrey;
+    }
+
+    path.purple {
+        stroke: purple;
+        stroke-dasharray: calc(40 * 3.142 * 1.85);
+        stroke-dashoffset: 20;
+        /* adjust last number for variance */
     }
 }

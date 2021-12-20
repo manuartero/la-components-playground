@@ -3,6 +3,7 @@ import './playlist-item.scss';
 import classnames from 'classnames';
 import { toHHMMSS } from '../../../utils/seconds';
 import { leadingZero } from '../../../utils/numbers';
+import { ReactComponent as ProgressBar } from './progress-bar.svg';
 
 enum FocusedElement {
     PLAY_BUTTON,
@@ -21,6 +22,8 @@ export interface PlayListItemProps {
     isFocused: boolean;
     onPlay: () => void;
     onPause: () => void;
+    leftPressed?: () => void;
+    rightPressed?: () => void;
 }
 
 const PlaylistItem = ({
@@ -34,6 +37,8 @@ const PlaylistItem = ({
     isFocused,
     onPlay,
     onPause,
+    leftPressed,
+    rightPressed,
 }: PlayListItemProps) => {
     const [isShowingInfo, setIsShowingInfo] = React.useState(false);
     const [focusedElement, setFocusedElement] = React.useState<FocusedElement>(FocusedElement.PLAY_BUTTON);
@@ -44,11 +49,53 @@ const PlaylistItem = ({
         }
     }, [isFocused]);
 
+    const isPlayButtonFocused = React.useCallback(
+        () => isFocused && focusedElement == FocusedElement.PLAY_BUTTON,
+        [focusedElement, isFocused]
+    );
+
+    const isInfoButtonFocused = React.useCallback(
+        () => isFocused && focusedElement == FocusedElement.INFO_BUTTON,
+        [focusedElement, isFocused]
+    );
+
+    const inputCallback = React.useCallback(
+        (evt: any): void => {
+            if (isFocused) {
+                if (evt.detail === window.SDK.keys.KEY_OK) {
+                    if (isPlaying && isPlayButtonFocused()) {
+                        onPause();
+                    } else if (!isPlaying && isPlayButtonFocused()) {
+                        onPlay();
+                    } else if (isInfoButtonFocused()) {
+                        setIsShowingInfo((old) => !old);
+                    }
+                } else if (evt.detail === window.SDK.keys.KEY_LEFT) {
+                    if (isPlayButtonFocused()) {
+                        leftPressed && leftPressed();
+                    } else if (isInfoButtonFocused()) {
+                        setFocusedElement(FocusedElement.PLAY_BUTTON);
+                    }
+                } else if (evt.detail === window.SDK.keys.KEY_RIGHT) {
+                    if (isPlayButtonFocused()) {
+                        setFocusedElement(FocusedElement.INFO_BUTTON);
+                    } else if (isInfoButtonFocused()) {
+                        rightPressed && rightPressed();
+                    }
+                }
+            }
+        },
+        [isFocused, isPlaying, isPlayButtonFocused, isInfoButtonFocused, onPause, onPlay, leftPressed, rightPressed]
+    );
+
+    React.useEffect(() => {
+        window.addEventListener('KEY_DOWN', inputCallback);
+        return () => {
+            window.removeEventListener('KEY_DOWN', inputCallback);
+        };
+    }, [inputCallback]);
+
     const alreadyStarted = progressInSeconds > 0;
-
-    const isPlayButtonFocused = isFocused && focusedElement == FocusedElement.PLAY_BUTTON;
-
-    const isInfoButtonFocused = isFocused && focusedElement == FocusedElement.INFO_BUTTON;
 
     const duration = () => {
         const { hh, mm, ss } = toHHMMSS(durationInSeconds);
@@ -58,12 +105,15 @@ const PlaylistItem = ({
         return `${leadingZero(mm)} mins ${leadingZero(ss)} segs`;
     };
 
-    const handleInfo = () => {
-        setIsShowingInfo(!isShowingInfo);
-    };
-
     return (
-        <div key={id} className='SDK__playlist-item' data-test-id={`playlist-item-${id}`}>
+        <div
+            key={id}
+            className={classnames('SDK__playlist-item', {
+                ['SDK__playlist-item--focused']: isFocused,
+                ['SDK__playlist-item--showing-info']: isShowingInfo,
+            })}
+            data-test-id={`playlist-item-${id}`}
+        >
             <div className='SDK__playlist-item__header'>
                 <div className='SDK__playlist-item__header__thumbnail'>
                     <div
@@ -83,46 +133,52 @@ const PlaylistItem = ({
                 </div>
                 <div className='SDK__playlist-item__header__actions'>
                     {isPlaying ? (
-                        <div
-                            className={classnames('SDK__playlist-item__header__actions__pause', {
-                                ['SDK__playlist-item__header__actions__pause--focused']: isPlayButtonFocused,
-                            })}
-                            role='button'
-                            onClick={onPause}
-                        ></div>
+                        // pause
+                        <>
+                            <div
+                                className={classnames('SDK__playlist-item__header__actions__pause', {
+                                    ['SDK__playlist-item__header__actions__pause--focused']: isPlayButtonFocused(),
+                                })}
+                                role='button'
+                            ></div>
+                        </>
                     ) : (
-                        <div
-                            className={classnames('SDK__playlist-item__header__actions__play', {
-                                ['SDK__playlist-item__header__actions__play--focused']: isPlayButtonFocused,
-                            })}
-                            role='button'
-                            onClick={onPlay}
-                        ></div>
+                        // play
+                        <>
+                            <div
+                                className={classnames('SDK__playlist-item__header__actions__play', {
+                                    ['SDK__playlist-item__header__actions__play--focused']: isPlayButtonFocused(),
+                                })}
+                                role='button'
+                            ></div>
+                        </>
                     )}
                     {isShowingInfo ? (
+                        // close
                         <div
                             className={classnames('SDK__playlist-item__header__actions__close', {
-                                ['SDK__playlist-item__header__actions__close--focused']: isInfoButtonFocused,
+                                ['SDK__playlist-item__header__actions__close--focused']: isInfoButtonFocused(),
                             })}
                             role='button'
-                            onClick={handleInfo}
                         ></div>
                     ) : (
+                        // info
                         <div
                             className={classnames('SDK__playlist-item__header__actions__info', {
-                                ['SDK__playlist-item__header__actions__info--focused']: isInfoButtonFocused,
+                                ['SDK__playlist-item__header__actions__info--focused']: isInfoButtonFocused(),
                             })}
                             role='button'
-                            onClick={handleInfo}
                         ></div>
                     )}
                 </div>
             </div>
-            {isShowingInfo && (
-                <div className='SDK__playlist-item__description'>
-                    <div>{description}</div>
-                </div>
-            )}
+            <div
+                className={classnames('SDK__playlist-item__description', {
+                    ['SDK__playlist-item__description--showing-info']: isShowingInfo,
+                })}
+            >
+                <div>{description}</div>
+            </div>
         </div>
     );
 };
