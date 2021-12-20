@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
-import PlaylistItem from 'components/playlist-item';
+import Playlist from 'components/playlist';
+import './style/index.scss';
 
 declare global {
     interface Window {
@@ -12,7 +13,7 @@ function App() {
     return (
         <div className='App'>
             <header className='App-header'>
-                <PlaylistItem />
+                <Playlist />
             </header>
         </div>
     );
