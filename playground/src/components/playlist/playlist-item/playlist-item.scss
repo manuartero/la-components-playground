@@ -1,0 +1,112 @@
+@mixin action-button($img) {
+    width: 64px;
+    height: 64px;
+    margin: 16px 16px 16px 24px;
+    background-image: url($img);
+    background-size: contain;
+}
+
+.SDK__playlist-item {
+    display: flex;
+    flex-direction: column;
+    width: 1012px;
+    height: 96px;
+
+    &__header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+
+        &__thumbnail {
+            width: 96px;
+            height: 96px;
+            margin: 0 24px 0 0;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+
+            &__img {
+                width: 96px;
+                height: 96px;
+                background-position: center;
+                background-size: cover;
+                background-color: transparent;
+                z-index: 9;
+
+                &::before {
+                    /* fixed img: placeholder */
+                    content: '';
+                    width: 96px;
+                    height: 96px;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    background-image: url('../../../assets/icons/playlist-item-placeholder.svg');
+                    background-size: 36px 28px, contain;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    background-color: rgba(245, 245, 245, 0.15);
+                    z-index: 0;
+                }
+            }
+
+            &__wave {
+                width: 96px;
+                height: 96px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-image: url('../../../assets/icons/playlist-item-waves.svg');
+                background-size: 64px 64px, contain;
+                background-position: center;
+                background-repeat: no-repeat;
+                &--hidden {
+                    opacity: 0;
+                }
+            }
+        }
+
+        &__info {
+            flex-direction: column;
+            width: 708px;
+            p {
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        &__actions {
+            flex-direction: row;
+
+            &__play {
+                @include action-button('../../../assets/icons/playlist-item-bt-play-default.svg');
+
+                &--focused {
+                    background-image: url('../../../assets/icons/playlist-item-bt-play-focused.svg');
+                }
+            }
+
+            &__pause {
+                @include action-button('../../../assets/icons/playlist-item-bt-pause-default.svg');
+
+                &--focused {
+                    background-image: url('../../../assets/icons/playlist-item-bt-pause-focused.svg');
+                }
+            }
+
+            &__info {
+                @include action-button('../../../assets/icons/playlist-item-bt-info.svg');
+
+                &--focused {
+                }
+            }
+        }
+    }
+
+    &__description {
+    }
+}
