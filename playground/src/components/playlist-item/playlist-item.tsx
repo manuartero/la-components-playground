@@ -25,6 +25,8 @@ const PlaylistItem = ({
     onPlay,
     onPause,
 }: PlayListItemProps) => {
+    // const [isPlaying, setIsPlaying] = React.useState(false);
+
     return (
         <div key={id} className='SDK__playlist-item' data-test-id={`playlist-item-${id}`}>
             <div className='SDK__playlist-item__header'>
