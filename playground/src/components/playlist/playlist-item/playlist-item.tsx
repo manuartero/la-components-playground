@@ -1,7 +1,8 @@
 import * as React from 'react';
 import './playlist-item.scss';
 import classnames from 'classnames';
-import { humanize } from '../../../utils/seconds';
+import { toHHMMSS } from '../../../utils/seconds';
+import { leadingZero } from '../../../utils/numbers';
 
 enum FocusedElement {
     PLAY_BUTTON,
@@ -49,12 +50,12 @@ const PlaylistItem = ({
 
     const isInfoButtonFocused = isFocused && focusedElement == FocusedElement.INFO_BUTTON;
 
-    const seconds = () => {
-        const { hh, mm, ss } = humanize(durationInSeconds);
+    const duration = () => {
+        const { hh, mm, ss } = toHHMMSS(durationInSeconds);
         if (hh > 0) {
-            return `${hh} hr ${mm} min ${ss}`;
+            return `${leadingZero(hh)} hr ${leadingZero(mm)} mins`;
         }
-        return `${mm}:${ss}`;
+        return `${leadingZero(mm)} mins ${leadingZero(ss)} segs`;
     };
 
     const handleInfo = () => {
@@ -77,7 +78,7 @@ const PlaylistItem = ({
                 </div>
                 <div className='SDK__playlist-item__header__info'>
                     <h3>{title}</h3>
-                    <p>{seconds()}</p>
+                    <p>{duration()}</p>
                     <p>{progressInSeconds}</p>
                 </div>
                 <div className='SDK__playlist-item__header__actions'>

@@ -1,6 +1,6 @@
-import { humanize } from './seconds';
+import { toHHMMSS } from './seconds';
 
-describe('humanize', () => {
+describe('toHHMMSS', () => {
     test('returns {hh,mm,ss}', () => {
         const cases = [
             {
@@ -37,7 +37,7 @@ describe('humanize', () => {
             },
         ];
         for (const { input, output } of cases) {
-            expect(output).toEqual(humanize(input));
+            expect(output).toEqual(toHHMMSS(input));
         }
     });
 });

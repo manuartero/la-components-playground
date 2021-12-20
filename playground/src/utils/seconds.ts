@@ -1,4 +1,4 @@
-export const humanize = (seconds: number) => {
+export const toHHMMSS = (seconds: number) => {
     let ss = seconds;
     const hh = Math.floor(ss / 3600);
     ss %= 3600;
