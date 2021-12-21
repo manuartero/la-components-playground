@@ -1,71 +1,138 @@
-import React, { FunctionComponent } from 'react';
-import PlaylistItem from './playlist-item';
+import React from 'react';
+import classnames from 'classnames';
+import './playlist.scss';
+import { useKeyPressed } from '../../hooks/use-key-pressed';
 
-const data = [
-    {
-        title: 'PERDER EL TIEMPO con NADIA DE SANTIAGO | 1x01',
-        description:
-            'Hablamos con la persona más polémica en redes sociales de España: Nadia de Santiago. \
-        La actriz, guionista y directora cuenta cómo convive con las críticas y explica \
-        su proceso para crear contenido feminista. \
-        La guinda del pastel la ponen Henar Alvarez y las Spice Girls con un fin de fiesta épico',
-        thumbnail: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/twitter/282/fox_1f98a.png',
-        durationInSeconds: 3640,
-        progressInSeconds: 200,
-    },
-    {
-        title: 'PERDER EL TIEMPO con NADIA DE SANTIAGO | 1x02',
-        description:
-            'Hablamos con la persona más polémica en redes sociales de España: Nadia de Santiago. \
-        La actriz, guionista y directora cuenta cómo convive con las críticas y explica \
-        su proceso para crear contenido feminista. \
-        La guinda del pastel la ponen Henar Alvarez y las Spice Girls con un fin de fiesta épico',
-        thumbnail: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/twitter/282/fox_1f98a.png',
-        durationInSeconds: 3541,
-        progressInSeconds: 0,
-    },
-    {
-        title: 'PERDER EL TIEMPO con NADIA DE SANTIAGO | 1x03',
-        description:
-            'Hablamos con la persona más polémica en redes sociales de España: Nadia de Santiago. \
-        La actriz, guionista y directora cuenta cómo convive con las críticas y explica \
-        su proceso para crear contenido feminista. \
-        La guinda del pastel la ponen Henar Alvarez y las Spice Girls con un fin de fiesta épico',
-        thumbnail: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/twitter/282/fox_1f98a.png',
-        durationInSeconds: 3540,
-        progressInSeconds: 31,
-    },
-];
+export type PlaylistProps = {
+    id: string;
+    children: React.ReactElement[];
+    focused: boolean;
+    defaultFocus?: number;
+    className?: string;
+    visibleRows?: number;
+    rowSeparation?: number;
+    onFocusedLaneChangedEnd?: (i: number) => void;
+};
 
-const PlayList: FunctionComponent = () => {
-    const onPlay = () => {
-        console.log('play');
-    };
+interface Size {
+    width: number;
+    height: number;
+}
 
-    const onPause = () => {
-        console.log('pause');
-    };
+function Playlist({
+    children,
+    focused,
+    className,
+    defaultFocus = 0,
+    visibleRows = 3,
+    rowSeparation = 51,
+    onFocusedLaneChangedEnd,
+}: PlaylistProps): JSX.Element {
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const scrollOffset = React.useRef(0);
+    const [focusedRow, setFocusedRow] = React.useState(defaultFocus);
+    const [rowsSizingRect, setRowsSizingRect] = React.useState<Size>({
+        width: 0,
+        height: 0,
+    });
 
-    const onLeftPressed = () => {
-        console.log('left');
+    /* useLayoutEffect(): wait for children to be render */
+    React.useLayoutEffect(() => {
+        if (containerRef.current && (rowsSizingRect.width === 0 || rowsSizingRect.height === 0)) {
+            requestAnimationFrame(() => {
+                const element = containerRef.current?.childNodes[0] as HTMLDivElement;
+                element &&
+                    setRowsSizingRect({
+                        width: element?.getBoundingClientRect()?.width || 0,
+                        height: element?.getBoundingClientRect()?.height || 0,
+                    });
+            });
+        }
+    }, [rowsSizingRect]);
+
+    const transitionEndHandler = React.useCallback(() => {
+        onFocusedLaneChangedEnd && onFocusedLaneChangedEnd(focusedRow);
+    }, [focusedRow, onFocusedLaneChangedEnd]);
+
+    const translateRows = React.useCallback(
+        (rowIndex: number) => {
+            if (focused && rowsSizingRect.height > 0) {
+                const scroll = (rowsSizingRect.height + rowSeparation) * rowIndex;
+                const shouldScroll = scroll !== scrollOffset.current;
+                scrollOffset.current = scroll;
+
+                containerRef.current?.childNodes.forEach((child: ChildNode, index: number) => {
+                    const element = child as HTMLDivElement;
+                    const opacity =
+                        index === rowIndex ? 1 : index > rowIndex && index < rowIndex + visibleRows ? 0.4 : 0;
+                    element.style.opacity = `${opacity}`;
+                    const scroll = (rowsSizingRect.height + rowSeparation) * index;
+                    element.style.top = `${scroll - scrollOffset.current}px`;
+                });
+                !shouldScroll && transitionEndHandler();
+            }
+            setFocusedRow(rowIndex);
+        },
+        [focused, visibleRows, rowsSizingRect, rowSeparation, transitionEndHandler]
+    );
+
+    React.useEffect(() => {
+        translateRows(defaultFocus);
+    }, [defaultFocus, translateRows]);
+
+    const inputCallback = React.useCallback(
+        (evt) => {
+            if (focused) {
+                let newIndex = focusedRow;
+                switch (evt.detail) {
+                    // eslint-disable-next-line no-undef
+                    case window.SDK.keys.KEY_DOWN:
+                        if (++newIndex >= children.length) {
+                            newIndex = children.length - 1;
+                        }
+                        break;
+                    // eslint-disable-next-line no-undef
+                    case window.SDK.keys.KEY_UP:
+                        if (--newIndex < 0) {
+                            newIndex = 0;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                if (newIndex !== focusedRow) {
+                    translateRows(newIndex);
+                }
+            }
+        },
+        [focused, translateRows, children.length, focusedRow]
+    );
+
+    useKeyPressed(inputCallback);
+
+    const onTransitionEndHandler = (event: React.TransitionEvent<HTMLDivElement>) => {
+        if (event.target === containerRef?.current?.childNodes.item(0)) {
+            transitionEndHandler();
+        }
     };
 
     return (
-        <PlaylistItem
-            id='42'
-            type='with-thumbnail'
-            thumbnail={data[2].thumbnail}
-            title={data[2].title}
-            description={data[2].description}
-            durationInSeconds={data[2].durationInSeconds}
-            isPlaying={false}
-            isFocused={true}
-            onPlay={onPlay}
-            onPause={onPause}
-            progressInSeconds={data[2].progressInSeconds}
-            leftPressed={onLeftPressed}
-        />
+        <div className={classnames('SDK__playlist', className)} ref={containerRef}>
+            {children.map((child, index) =>
+                React.cloneElement(child, {
+                    isFocused: focused && index === focusedRow,
+                    className: `SDK__playlist__row ${child.props?.className ? child.props?.className : ''}${
+                        index < focusedRow ? ' hidden' : ''
+                    }${index > focusedRow + visibleRows ? ' hidden' : ''}${index === focusedRow ? ' focus' : ''}`,
+                    key: `${child.props?.id}-${index}`,
+                    style: {
+                        ...child.props?.style,
+                        marginBottom: rowSeparation,
+                    },
+                })
+            )}
+        </div>
     );
-};
+}
 
-export default PlayList;
+export default Playlist;

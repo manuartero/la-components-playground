@@ -1,9 +1,11 @@
 import * as React from 'react';
 import './playlist-item.scss';
 import classnames from 'classnames';
-import { toHHMMSS } from '../../../utils/seconds';
-import { leadingZero } from '../../../utils/numbers';
+import { toHHMMSS } from 'utils/seconds';
+import { leadingZero } from 'utils/numbers';
 import { ReactComponent as ProgressBar } from './progress-bar.svg';
+import { useEffectDebugger } from 'hooks/use-effect-debugger';
+import { useKeyPressed } from 'hooks/use-key-pressed';
 
 const CONSIDER_AS_IN_PROGRESS_TRESHOLD = 20;
 const CONSIDER_AS_FINISHED_TRESHOLD = 20;
@@ -99,12 +101,7 @@ const PlaylistItem = ({
         [isFocused, isPlaying, isPlayButtonFocused, isInfoButtonFocused, onPause, onPlay, leftPressed, rightPressed]
     );
 
-    React.useEffect(() => {
-        window.addEventListener('KEY_DOWN', inputCallback);
-        return () => {
-            window.removeEventListener('KEY_DOWN', inputCallback);
-        };
-    }, [inputCallback]);
+    useKeyPressed(inputCallback);
 
     const progressStatus = () => {
         const isAlreadyFinished = progressInSeconds + CONSIDER_AS_FINISHED_TRESHOLD >= durationInSeconds;
@@ -128,7 +125,7 @@ const PlaylistItem = ({
 
     return (
         <div
-            key={id}
+            id={id}
             className={classnames('SDK__playlist-item', {
                 ['SDK__playlist-item--focused']: isFocused,
                 ['SDK__playlist-item--showing-info']: isShowingInfo,
