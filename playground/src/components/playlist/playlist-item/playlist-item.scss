@@ -44,6 +44,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
+        text-align: left;
         width: 100%;
         min-height: 96px;
         overflow: hidden;
@@ -84,6 +85,7 @@
         }
 
         &__info {
+            display: flex;
             flex-direction: column;
             overflow: hidden;
             width: 708px;
@@ -93,6 +95,17 @@
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+            }
+            &__progress {
+                display: flex;
+                flex-direction: row;
+                &__status {
+                    background-color: red;
+                    width: 222px; // 196px
+                    height: 25px;
+                    &__check-icon {
+                    }
+                }
             }
         }
 
