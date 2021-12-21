@@ -58,7 +58,7 @@ const PlayList: FunctionComponent = () => {
             title={data[2].title}
             description={data[2].description}
             durationInSeconds={data[2].durationInSeconds}
-            isPlaying={true}
+            isPlaying={false}
             isFocused={true}
             onPlay={onPlay}
             onPause={onPause}
