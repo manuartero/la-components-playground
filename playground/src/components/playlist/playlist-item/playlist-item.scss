@@ -28,7 +28,8 @@
     width: 1012px;
     height: 96px;
     border-radius: 8px;
-    transition: height 300ms ease-in;
+    transition: height 0.3s ease-in, top 0.3s, opacity 0.3s;
+    position: relative;
     overflow: hidden;
 
     &--focused {
@@ -107,7 +108,6 @@
                     }
                 }
                 &__progress-bar {
-                    
                 }
             }
         }

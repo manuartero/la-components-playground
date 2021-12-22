@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import './playlist.scss';
 import { useKeyPressed } from '../../hooks/use-key-pressed';
+import { useEffectDebugger } from 'hooks/use-effect-debugger';
 
 export type PlaylistProps = {
     id: string;
@@ -11,7 +12,7 @@ export type PlaylistProps = {
     className?: string;
     visibleRows?: number;
     rowSeparation?: number;
-    onFocusedLaneChangedEnd?: (i: number) => void;
+    onFocusedRowChangedEnd?: (i: number) => void;
 };
 
 interface Size {
@@ -24,13 +25,14 @@ function Playlist({
     focused,
     className,
     defaultFocus = 0,
-    visibleRows = 3,
+    visibleRows = 5,
     rowSeparation = 51,
-    onFocusedLaneChangedEnd,
+    onFocusedRowChangedEnd,
 }: PlaylistProps): JSX.Element {
     const containerRef = React.useRef<HTMLDivElement>(null);
+    const [isTransitionActive, setTransitionActive] = React.useState(false);
     const scrollOffset = React.useRef(0);
-    const [focusedRow, setFocusedRow] = React.useState(defaultFocus);
+    const focusedRow = React.useRef(defaultFocus);
     const [rowsSizingRect, setRowsSizingRect] = React.useState<Size>({
         width: 0,
         height: 0,
@@ -51,39 +53,50 @@ function Playlist({
     }, [rowsSizingRect]);
 
     const transitionEndHandler = React.useCallback(() => {
-        onFocusedLaneChangedEnd && onFocusedLaneChangedEnd(focusedRow);
-    }, [focusedRow, onFocusedLaneChangedEnd]);
+        onFocusedRowChangedEnd && onFocusedRowChangedEnd(focusedRow.current);
+        setTransitionActive(false);
+    }, [focusedRow, onFocusedRowChangedEnd]);
 
     const translateRows = React.useCallback(
-        (rowIndex: number) => {
-            if (focused && rowsSizingRect.height > 0) {
-                const scroll = (rowsSizingRect.height + rowSeparation) * rowIndex;
+        (nextRow: number) => {
+            if (rowsSizingRect.height > 0) {
+                setTransitionActive(true);
+                const scroll = (rowsSizingRect.height + rowSeparation) * nextRow;
                 const shouldScroll = scroll !== scrollOffset.current;
                 scrollOffset.current = scroll;
 
+                const defineOpacity = (row: number) => {
+                    if (row >= nextRow && row < nextRow + visibleRows - 2) {
+                        return 1;
+                    } else if (row < nextRow + visibleRows - 1) {
+                        return 0.8;
+                    } else if (row < nextRow + visibleRows) {
+                        return 0.6;
+                    }
+                    return 0;
+                };
+
                 containerRef.current?.childNodes.forEach((child: ChildNode, index: number) => {
                     const element = child as HTMLDivElement;
-                    const opacity =
-                        index === rowIndex ? 1 : index > rowIndex && index < rowIndex + visibleRows ? 0.4 : 0;
+                    const opacity = defineOpacity(index);
                     element.style.opacity = `${opacity}`;
-                    const scroll = (rowsSizingRect.height + rowSeparation) * index;
-                    element.style.top = `${scroll - scrollOffset.current}px`;
+                    element.style.top = `${-scrollOffset.current}px`;
                 });
                 !shouldScroll && transitionEndHandler();
             }
-            setFocusedRow(rowIndex);
+            focusedRow.current = nextRow;
         },
-        [focused, visibleRows, rowsSizingRect, rowSeparation, transitionEndHandler]
+        [visibleRows, rowsSizingRect, rowSeparation, transitionEndHandler]
     );
 
-    React.useEffect(() => {
-        translateRows(defaultFocus);
-    }, [defaultFocus, translateRows]);
+    useEffectDebugger(() => {
+        translateRows(+defaultFocus); // secure defaultFocus is a number
+    }, [defaultFocus, focused, visibleRows, rowsSizingRect, rowSeparation, transitionEndHandler]);
 
     const inputCallback = React.useCallback(
         (evt) => {
             if (focused) {
-                let newIndex = focusedRow;
+                let newIndex = focusedRow.current;
                 switch (evt.detail) {
                     // eslint-disable-next-line no-undef
                     case window.SDK.keys.KEY_DOWN:
@@ -100,12 +113,12 @@ function Playlist({
                     default:
                         break;
                 }
-                if (newIndex !== focusedRow) {
+                if (newIndex !== focusedRow.current) {
                     translateRows(newIndex);
                 }
             }
         },
-        [focused, translateRows, children.length, focusedRow]
+        [focused, translateRows, children.length]
     );
 
     useKeyPressed(inputCallback);
@@ -117,14 +130,21 @@ function Playlist({
     };
 
     return (
-        <div className={classnames('SDK__playlist', className)} ref={containerRef}>
+        <div
+            className={classnames('SDK__playlist', className)}
+            ref={containerRef}
+            onTransitionEnd={onTransitionEndHandler}
+        >
             {children.map((child, index) =>
                 React.cloneElement(child, {
-                    isFocused: focused && index === focusedRow,
+                    isFocused: focused && !isTransitionActive && index === focusedRow.current,
                     className: `SDK__playlist__row ${child.props?.className ? child.props?.className : ''}${
-                        index < focusedRow ? ' hidden' : ''
-                    }${index > focusedRow + visibleRows ? ' hidden' : ''}${index === focusedRow ? ' focus' : ''}`,
+                        index < focusedRow.current ? ' hidden' : ''
+                    }${index > focusedRow.current + visibleRows ? ' hidden' : ''}${
+                        index === focusedRow.current ? ' focus' : ''
+                    }`,
                     key: `${child.props?.id}-${index}`,
+                    // onTransitionEnd: onTransitionEndHandler,
                     style: {
                         ...child.props?.style,
                         marginBottom: rowSeparation,

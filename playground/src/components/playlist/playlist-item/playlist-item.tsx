@@ -37,6 +37,7 @@ export interface PlayListItemProps {
     onPause: () => void;
     leftPressed?: () => void;
     rightPressed?: () => void;
+    style?: React.CSSProperties;
 }
 
 const PlaylistItem = ({
@@ -52,6 +53,7 @@ const PlaylistItem = ({
     onPause,
     leftPressed,
     rightPressed,
+    style,
 }: PlayListItemProps) => {
     const [isShowingInfo, setIsShowingInfo] = React.useState(false);
     const [focusedElement, setFocusedElement] = React.useState<FocusElements>(FocusElements.PLAY_BUTTON);
@@ -130,6 +132,7 @@ const PlaylistItem = ({
                 ['SDK__playlist-item--focused']: isFocused,
                 ['SDK__playlist-item--showing-info']: isShowingInfo,
             })}
+            style={style}
             data-test-id={`playlist-item-${id}`}
         >
             <div className='SDK__playlist-item__header'>
