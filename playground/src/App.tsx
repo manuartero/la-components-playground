@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { Playlist, PlaylistItem } from 'components/playlist';
+import { PodcastPlayer } from 'components/podcast-player';
 
 import './style/index.scss';
 
@@ -123,26 +124,25 @@ const onPause = () => {
 function App() {
     return (
         <div className='App'>
-            <header className='App-header'>
-                <Playlist focused id='my-super-playlist' visibleRows={5} rowSeparation={16}>
-                    {data.map((item, index) => (
-                        <PlaylistItem
-                            id={index.toString()}
-                            key={index}
-                            type='with-thumbnail'
-                            thumbnail={item.thumbnail}
-                            title={item.title}
-                            description={item.description}
-                            durationInSeconds={item.durationInSeconds}
-                            isPlaying={false}
-                            isFocused={false}
-                            onPlay={onPlay}
-                            onPause={onPause}
-                            progressInSeconds={item.progressInSeconds}
-                        />
-                    ))}
-                </Playlist>
-            </header>
+            <PodcastPlayer id='my-super-podcast-player' title={data[0].title} />
+            <Playlist focused id='my-super-playlist' visibleRows={5} rowSeparation={16}>
+                {data.map((item, index) => (
+                    <PlaylistItem
+                        id={index.toString()}
+                        key={index}
+                        type='with-thumbnail'
+                        thumbnail={item.thumbnail}
+                        title={item.title}
+                        description={item.description}
+                        durationInSeconds={item.durationInSeconds}
+                        isPlaying={false}
+                        isFocused={false}
+                        onPlay={onPlay}
+                        onPause={onPause}
+                        progressInSeconds={item.progressInSeconds}
+                    />
+                ))}
+            </Playlist>
         </div>
     );
 }

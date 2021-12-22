@@ -61,6 +61,7 @@ const PlaylistItem = ({
     React.useEffect(() => {
         if (!isFocused) {
             setIsShowingInfo(false);
+            setFocusedElement(FocusElements.PLAY_BUTTON);
         }
     }, [isFocused]);
 
@@ -120,7 +121,12 @@ const PlaylistItem = ({
             );
         }
         if (isAlreadyStarted) {
-            return <div className='SDK__playlist-item__header__info__progress__status'>{`Quedan ${timeLeft}`}</div>;
+            return (
+                <div className='SDK__playlist-item__header__info__progress__status'>
+                    <span>{`Quedan ${timeLeft}`}</span>
+                    <div></div>
+                </div>
+            );
         }
         return <div className='SDK__playlist-item__header__info__progress__status'>{totalTime}</div>;
     };

@@ -1,0 +1,27 @@
+.SDK__podcast-player {
+    width: 354px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 30%;
+    left: 158px;
+
+    &__cover {
+        width: 354px;
+        height: 354px;
+        margin: 0 71px 32px;
+        border-radius: 16px;
+    }
+
+    &__title {
+        width: 354px;
+        width: 496px;
+        height: 38px;
+        margin: 0 0 32px;
+        font-family: WorkSans;
+        font-size: 32px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
