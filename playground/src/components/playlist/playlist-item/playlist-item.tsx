@@ -137,6 +137,7 @@ const PlaylistItem = ({
         >
             <div className='SDK__playlist-item__header'>
                 <div className='SDK__playlist-item__header__thumbnail'>
+                    <div className='SDK__playlist-item__header__thumbnail__placeholder' />
                     <div
                         className='SDK__playlist-item__header__thumbnail__img'
                         style={{ backgroundImage: `url(${thumbnail})` }}
