@@ -32,7 +32,7 @@ export interface PlayListItemProps {
     durationInSeconds: number;
     progressInSeconds: number;
     isPlaying: boolean;
-    isFocused: boolean;
+    isFocused?: boolean;
     onPlay: () => void;
     onPause: () => void;
     leftPressed?: () => void;
@@ -48,7 +48,7 @@ const PlaylistItem = ({
     durationInSeconds,
     progressInSeconds,
     isPlaying,
-    isFocused,
+    isFocused = false,
     onPlay,
     onPause,
     leftPressed,

@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { ReactComponent as InProgressBar } from '../../assets/icons/playlist-progress-bar-in-progress.svg';
 import './podcast-player.scss';
+import { useKeyPressed } from 'hooks/use-key-pressed';
 
 const GRAPH_LENGTH = 496;
 const DELTA_PIXELS = (GRAPH_LENGTH / 100) * 3;
@@ -24,6 +25,10 @@ export type PodcastPlayerProps = {
     isPlaying?: boolean;
     cover?: string;
     progressPercent?: number;
+    onPause?: () => void;
+    onPlay?: () => void;
+    leftPressed?: () => void;
+    rightPressed?: () => void;
 };
 
 function PodcastPlayer({
@@ -33,6 +38,10 @@ function PodcastPlayer({
     isFocused = false,
     cover = '',
     progressPercent = 0,
+    onPause,
+    onPlay,
+    leftPressed,
+    rightPressed,
 }: PodcastPlayerProps): JSX.Element {
     const podcastPlayerRef = React.useRef<HTMLDivElement>(null);
     const progressRef = React.useRef<number>(0);
@@ -50,6 +59,27 @@ function PodcastPlayer({
 
         window.requestAnimationFrame(animation);
     }, [progressPercent, podcastPlayerRef]);
+
+    const inputCallback = React.useCallback(
+        (evt: any): void => {
+            if (isFocused) {
+                if (evt.detail === window.SDK.keys.KEY_OK) {
+                    if (isPlaying && onPause) {
+                        onPause();
+                    } else if (!isPlaying && onPlay) {
+                        onPlay();
+                    }
+                } else if (evt.detail === window.SDK.keys.KEY_LEFT && leftPressed) {
+                    leftPressed();
+                } else if (evt.detail === window.SDK.keys.KEY_RIGHT && rightPressed) {
+                    rightPressed();
+                }
+            }
+        },
+        [isFocused, isPlaying, onPause, onPlay, leftPressed, rightPressed]
+    );
+
+    useKeyPressed(inputCallback);
 
     return (
         <div className={classnames('SDK__podcast-player', className)} ref={podcastPlayerRef}>
@@ -78,7 +108,7 @@ function PodcastPlayer({
                     <>
                         <div
                             className={classnames('SDK__podcast-player__controls__play', {
-                                ['SDK__podcast-player__controls--focused']: isFocused,
+                                ['SDK__podcast-player__controls__play--focused']: isFocused,
                             })}
                             role='button'
                         />

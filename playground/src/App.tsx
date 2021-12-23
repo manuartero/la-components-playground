@@ -121,9 +121,15 @@ const onPause = () => {
     console.log('pause');
 };
 
+enum FocusElements {
+    PODCAST_PLAYER,
+    PLAYLIST,
+}
+
 function App() {
     const [progress, setProgress] = React.useState(20);
     const intervalRef = React.useRef<number | undefined>(undefined);
+    const [focusedElement, setFocusedElement] = React.useState<FocusElements>(FocusElements.PLAYLIST);
 
     React.useEffect(() => {
         intervalRef.current = window.setInterval(() => {
@@ -134,6 +140,15 @@ function App() {
             });
         }, 1000);
     }, []);
+
+    const onLeftPressed = React.useCallback(() => {
+        setFocusedElement(FocusElements.PODCAST_PLAYER);
+    }, []);
+
+    const onRightPressed = React.useCallback(() => {
+        setFocusedElement(FocusElements.PLAYLIST);
+    }, []);
+
     return (
         <div className='App'>
             <PodcastPlayer
@@ -143,8 +158,15 @@ function App() {
                     'https://cdn.domestika.org/c_limit,dpr_1.0,f_auto,q_auto,w_820/v1583138995/content-items/003/800/173/%25C3%258Ddolos_E05_4x4-original.jpg?1583138995'
                 }
                 progressPercent={progress}
+                isFocused={focusedElement === FocusElements.PODCAST_PLAYER}
+                rightPressed={onRightPressed}
             />
-            <Playlist focused id='my-super-playlist' visibleRows={5} rowSeparation={16}>
+            <Playlist
+                focused={focusedElement === FocusElements.PLAYLIST}
+                id='my-super-playlist'
+                visibleRows={5}
+                rowSeparation={16}
+            >
                 {data.map((item, index) => (
                     <PlaylistItem
                         id={index.toString()}
@@ -155,10 +177,10 @@ function App() {
                         description={item.description}
                         durationInSeconds={item.durationInSeconds}
                         isPlaying={false}
-                        isFocused={false}
                         onPlay={onPlay}
                         onPause={onPause}
                         progressInSeconds={item.progressInSeconds}
+                        leftPressed={onLeftPressed}
                     />
                 ))}
             </Playlist>
