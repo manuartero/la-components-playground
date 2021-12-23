@@ -1,16 +1,35 @@
+@function icon($path) {
+    @return '../../assets/icons/' + $path;
+}
+
+@mixin action-button($icon) {
+    width: 64px;
+    height: 64px;
+    margin: 0 45px;
+    background-image: url(icon($icon));
+    background-size: contain;
+    box-sizing: border-box;
+}
+
 .SDK__podcast-player {
-    width: 354px;
+    width: 496px;
+    margin-right: 96px;
     display: flex;
     flex-direction: column;
     position: absolute;
     top: 30%;
     left: 158px;
+    box-sizing: border-box;
 
     &__cover {
         width: 354px;
         height: 354px;
         margin: 0 71px 32px;
         border-radius: 16px;
+        background-position: center;
+        background-size: cover;
+        background-color: transparent;
+        box-sizing: border-box;
     }
 
     &__title {
@@ -23,5 +42,37 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        box-sizing: border-box;
+        justify-content: left;
+    }
+
+    &__progress {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        background-image: url('../../assets/icons/playlist-progress-bar-complete.svg');
+        margin-bottom: 16px;
+    }
+
+    &__controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &__play {
+            @include action-button('playlist-item-bt-play-default.svg');
+
+            &--focused {
+                background-image: url(icon('playlist-item-bt-play-focused.svg'));
+            }
+        }
+
+        &__pause {
+            @include action-button('playlist-item-bt-pause-default.svg');
+
+            &--focused {
+                background-image: url(icon('playlist-item-bt-pause-focused.svg'));
+            }
+        }
     }
 }

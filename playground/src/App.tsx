@@ -122,9 +122,28 @@ const onPause = () => {
 };
 
 function App() {
+    const [progress, setProgress] = React.useState(20);
+    const intervalRef = React.useRef<number | undefined>(undefined);
+
+    React.useEffect(() => {
+        intervalRef.current = window.setInterval(() => {
+            setProgress((old) => {
+                old++;
+                old > 99 && window.clearInterval(intervalRef.current);
+                return old;
+            });
+        }, 1000);
+    }, []);
     return (
         <div className='App'>
-            <PodcastPlayer id='my-super-podcast-player' title={data[0].title} />
+            <PodcastPlayer
+                id='my-super-podcast-player'
+                title={data[0].title}
+                cover={
+                    'https://cdn.domestika.org/c_limit,dpr_1.0,f_auto,q_auto,w_820/v1583138995/content-items/003/800/173/%25C3%258Ddolos_E05_4x4-original.jpg?1583138995'
+                }
+                progressPercent={progress}
+            />
             <Playlist focused id='my-super-playlist' visibleRows={5} rowSeparation={16}>
                 {data.map((item, index) => (
                     <PlaylistItem

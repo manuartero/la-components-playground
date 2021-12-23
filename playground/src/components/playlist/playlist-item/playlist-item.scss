@@ -12,6 +12,7 @@
     background-image: url(icon($icon));
     background-position: center;
     background-repeat: no-repeat;
+    box-sizing: border-box;
 }
 
 @mixin action-button($icon) {
@@ -20,6 +21,7 @@
     margin: 16px 16px 16px 0;
     background-image: url(icon($icon));
     background-size: contain;
+    box-sizing: border-box;
 }
 
 .SDK__playlist-item {
@@ -31,6 +33,7 @@
     transition: height 0.3s ease-in, top 0.3s, opacity 0.3s;
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
 
     &--focused {
         background-color: rgba(245, 245, 245, 0.2);
@@ -49,6 +52,7 @@
         width: 100%;
         min-height: 96px;
         overflow: hidden;
+        box-sizing: border-box;
 
         &__thumbnail {
             width: 96px;
@@ -56,6 +60,7 @@
             margin: 0 24px 0 0;
             position: relative;
             overflow: hidden;
+            box-sizing: border-box;
 
             &__placeholder {
                 @include fixed-img-placeholder('playlist-item-placeholder.svg');
@@ -70,6 +75,7 @@
                 background-size: cover;
                 background-color: transparent;
                 position: relative;
+                box-sizing: border-box;
             }
 
             &__wave {
@@ -88,6 +94,7 @@
             overflow: hidden;
             width: 708px;
             margin-right: 24px;
+            box-sizing: border-box;
             p {
                 width: 100%;
                 white-space: nowrap;
@@ -97,6 +104,7 @@
             &__progress {
                 display: flex;
                 flex-direction: row;
+                box-sizing: border-box;
                 &__status {
                     background-color: red;
                     width: 222px; // 196px
@@ -112,6 +120,7 @@
         &__actions {
             display: flex;
             flex-direction: row;
+            box-sizing: border-box;
 
             &__play {
                 @include action-button('playlist-item-bt-play-default.svg');
@@ -157,6 +166,7 @@
         overflow: hidden;
         opacity: 0;
         transition: opacity 300ms ease-in;
+        box-sizing: border-box;
 
         &--showing-info {
             opacity: 1;
